@@ -16,6 +16,7 @@ spec:
         run: data-platform-api-currency-reads-rmq-kube
         app: CURRENCY
     spec:
+      nodeName: worker
       hostname: data-platform-api-currency-reads-rmq-kube
       containers:
         - name: data-platform-api-currency-reads-rmq-kube
