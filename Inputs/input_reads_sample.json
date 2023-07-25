@@ -5,20 +5,27 @@
 	"filepath": "/var/lib/aion/Data/rededge_sdc/abcdef.json",
 	"api_status_code": 200,
 	"runtime_session_id": "boi9ar543dg91ipdnspi099u231280ab0v8af0ew",
-	"business_partner": 101,
+	"business_partner": null,
 	"service_label": "CURRENCY",
 	"api_type": "reads",
 	"Currency": {
-		"Currency": "JPY",
-		"CurrencyText" :[
+		"Currency": "",
+		"CreationDate": "",
+		"LastChangeDate": "",
+		"IsMarkedForDeletion": null,
+		"CurrencyText": [
 			{
-			"Language": "JA",
-			"CurrencyName": "",
-			"CurrencyLongName": ""
+				"Language": "",
+				"CurrencyName": "",
+				"CurrencyLongName": "",
+				"CreationDate": "",
+				"LastChangeDate": "",
+				"IsMarkedForDeletion": null
 			}
 		]
 	},
 	"api_schema": "DPFMCurrencyReads",
-	"accepter": ["All"],
-	"deleted": false
+	"accepter": [
+		"Currency"
+	]
 }

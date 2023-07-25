@@ -27,6 +27,10 @@ func (c *DPFMAPICaller) readSqlProcess(
 			func() {
 				currency = c.Currency(mtx, input, output, errs, log)
 			}()
+		case "Currencies":
+			func() {
+				currency = c.Currencies(mtx, input, output, errs, log)
+			}()
 		case "CurrencyText":
 			func() {
 				currencyText = c.CurrencyText(mtx, input, output, errs, log)
@@ -54,12 +58,44 @@ func (c *DPFMAPICaller) Currency(
 	errs *[]error,
 	log *logger.Logger,
 ) *[]dpfm_api_output_formatter.Currency {
-	currency := input.Currency.Currency
+	where := fmt.Sprintf("WHERE Currency = '%s'", input.Currency.Currency)
 
 	rows, err := c.db.Query(
 		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_currency_currency_data
-		WHERE Currency = ?;`, currency,
+		` + where + ` ORDER BY IsMarkedForDeletion ASC, Currency DESC;`,
+	)
+	if err != nil {
+		*errs = append(*errs, err)
+		return nil
+	}
+	defer rows.Close()
+
+	data, err := dpfm_api_output_formatter.ConvertToCurrency(rows)
+	if err != nil {
+		*errs = append(*errs, err)
+		return nil
+	}
+
+	return data
+}
+
+func (c *DPFMAPICaller) Currencies(
+	mtx *sync.Mutex,
+	input *dpfm_api_input_reader.SDC,
+	output *dpfm_api_output_formatter.SDC,
+	errs *[]error,
+	log *logger.Logger,
+) *[]dpfm_api_output_formatter.Currency {
+
+	if input.Currency.IsMarkedForDeletion != nil {
+		where = fmt.Sprintf("%s\nAND IsMarkedForDeletion = %v", where, *input.Currency.IsMarkedForDeletion)
+	}
+
+	rows, err := c.db.Query(
+		`SELECT *
+		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_currency_currency_data
+		` + where + ` ORDER BY IsMarkedForDeletion ASC, Currency DESC;`,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
